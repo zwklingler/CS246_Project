@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Project</string>
+    <string name="addZone">Add a Quiet Zone</string>
+    <string name="settings">Settings</string>
+    <string name="removeZone">Remove a Quiet Zone</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

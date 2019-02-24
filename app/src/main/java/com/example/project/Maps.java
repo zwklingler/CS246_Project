@@ -2,17 +2,21 @@ package com.example.project;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private float lat;
+    private float lon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +42,36 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        //Update when user drags marker
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                Log.d("Location: " ,"latitude : "+ marker.getPosition().latitude);
+                marker.setSnippet(String.valueOf(marker.getPosition().latitude));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+            }
+
+        });
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        //LatLng location = new LatLng(-34, 151);
+        //mMap.addMarker(new MarkerOptions().position(location).title("Current Location"));
+        final LatLng PERTH = new LatLng(-31.90, 115.86);
+        MarkerOptions options = new MarkerOptions()
+                .position(PERTH)
+                .draggable(true)
+                .title("Location");
+        mMap.addMarker(options);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(PERTH));
     }
 }

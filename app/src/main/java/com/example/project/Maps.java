@@ -1,5 +1,11 @@
 package com.example.project;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,7 +60,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                Log.d("Location: " ,"latitude : "+ marker.getPosition().latitude);
+                Log.d("Location: ", "latitude : " + marker.getPosition().latitude);
                 lat = marker.getPosition().latitude;
                 lon = marker.getPosition().longitude;
 
@@ -68,15 +74,26 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
 
         });
-        lat = -31.9;
-        lon = 115.86;
-        final LatLng PERTH = new LatLng(lat, lon);
+
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        final boolean gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+           if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                lat = 42;
+                lon = -112;
+            }
+            else {
+                lat = (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)).getLatitude();
+                lon = (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)).getLongitude();
+            }
+
+        final LatLng location = new LatLng(lat, lon);
         MarkerOptions options = new MarkerOptions()
-                .position(PERTH)
+                .position(location)
                 .draggable(true)
                 .title("Location");
         mMap.addMarker(options);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(PERTH));
+        float zoom = 14;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom));
     }
 
     public void send(View view) {
@@ -112,7 +129,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                     Toast.LENGTH_LONG).show();
 
             ChangeRinger cr = new ChangeRinger(this);
+
+            //changeRinger() sets it to 0 and revertRinger() reverts it to its volume before changeRinger() was called
             cr.changeRinger();
+            //cr.revertRinger();
         }
 
 

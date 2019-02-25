@@ -30,21 +30,19 @@ public class ChangeRinger {
     }
 
     public void changeRinger() {
+        //This should make the Ringer Silent, but for some reason it turns on Do Not Disturb (Doesn't work as expected)
         //am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 
-        //Set Ringer Volume to 0
-        //am.setStreamVolume(STREAM_RING, 0, 0);
-
-        //Set Ringer on Mute
+        //Set Ringer Volume to 0 (works as expected)
         am.adjustStreamVolume(STREAM_RING, AudioManager.ADJUST_MUTE, 0);
 
         //Log.d("Ringer Test: ", String.valueOf(am.getRingerMode()));
         //am.setRingerMode(2);
 
-
     }
 
     public void revertRinger() {
+        //This turns of Do Not Disturb
         //am.setRingerMode(2);
 
         //Unmute Ringer

@@ -42,7 +42,7 @@ public class ChangeRinger {
     }
 
     public void revertRinger() {
-        //This turns of Do Not Disturb
+        //This turns off Do Not Disturb
         //am.setRingerMode(2);
 
         //Unmute Ringer

@@ -1,14 +1,22 @@
 package com.example.project;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
+
 import java.lang.Object;
 
-public class Zone {
+public class Zone extends AppCompatActivity {
     private double latitude;
     private double longitude;
     private int radius;
     private String name;
-    private int ringer;
-    private int volume;
+    private Geofence geofence;
 
 
     public double getLatitude() {
@@ -27,17 +35,15 @@ public class Zone {
         return name;
     }
 
-    public int getRinger() {
-        return ringer;
-    }
-
-    public int getVolume() {
-        return volume;
-    }
-
     public void createGeofence() {
-
+       Geofence geofence = new Geofence.Builder().setRequestId(name) // Geofence ID
+               .setCircularRegion( latitude, longitude, radius) // defining fence region
+               // Transition types that it should look for
+               .setTransitionTypes( Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT )
+               .build();
+       this.geofence = geofence;
     }
+
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
@@ -55,11 +61,7 @@ public class Zone {
         this.name = name;
     }
 
-    public void setRinger(int ringer) {
-        this.ringer = ringer;
-    }
-
-    public void setVolume(int volume) {
-        this.volume = volume;
+    public Geofence getGeofence() {
+        return geofence;
     }
 }

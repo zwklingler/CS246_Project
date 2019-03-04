@@ -117,8 +117,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         }
         else {
             radius = Integer.parseInt(sRadius);
-            if (radius < 500) {
-                Toast.makeText(this, "Radius must be at least 500",
+            if (radius < 100) {
+                Toast.makeText(this, "Radius must be at least 100",
                         Toast.LENGTH_LONG).show();
                 canSend = false;
             }
@@ -128,6 +128,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             Toast.makeText(this, "Latitude: " + lat + "     Longitude: " + lon,
                     Toast.LENGTH_LONG).show();
 
+            Zone z = new Zone();
+            z.setLatitude(lat);
+            z.setLongitude(lon);
+            z.setName(name);
+            z.setRadius(radius);
+            z.createGeofence();
             ChangeRinger cr = new ChangeRinger(this);
 
             //changeRinger() sets it to 0 and revertRinger() reverts it to its volume before changeRinger() was called

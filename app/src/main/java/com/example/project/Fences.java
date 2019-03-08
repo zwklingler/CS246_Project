@@ -1,11 +1,15 @@
 package com.example.project;
 
-import com.google.android.gms.location.LocationCallback;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gson.Gson;
 
-public class Fences extends LocationCallback {
+import static android.content.Context.MODE_PRIVATE;
+
+public class Fences {
 
     private List<Zone> allZones;
 
@@ -24,12 +28,23 @@ public class Fences extends LocationCallback {
         return allZones;
     }
 
-    public void save() {
+    public void save(Context context) {
         //Save allZones using GSON to a file
+        final String s = "Some GSON Stuff";
+        SharedPreferences pref = context.getSharedPreferences("MyPref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString("GSON", s);
+        editor.apply();
+
     }
 
-    public void load() {
+    public void load(Context context) {
         //Load allZones using GSON from a file
+        SharedPreferences pref = context.getSharedPreferences("MyPref", MODE_PRIVATE);
+        String s = pref.getString("GSON", null);         // getting String
+
+
     }
 
     public void addGeofences() {

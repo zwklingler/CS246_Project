@@ -2,6 +2,7 @@ package com.example.project;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -125,23 +127,21 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         }
 
         if (canSend == true) {
-            Toast.makeText(this, "Latitude: " + lat + "     Longitude: " + lon,
-                    Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Latitude: " + lat + "     Longitude: " + lon,
+              //      Toast.LENGTH_LONG).show();
 
             Zone z = new Zone();
             z.setLatitude(lat);
             z.setLongitude(lon);
             z.setName(name);
             z.setRadius(radius);
-            z.createGeofence();
+            z.createGeofence(this);
+
             ChangeRinger cr = new ChangeRinger(this);
 
             //changeRinger() sets it to 0 and revertRinger() reverts it to its volume before changeRinger() was called
             cr.changeRinger();
             //cr.revertRinger();
         }
-
-
-
     }
 }

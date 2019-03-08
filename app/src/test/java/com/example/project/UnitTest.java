@@ -12,7 +12,9 @@ import static org.junit.Assert.*;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
+
 public class UnitTest {
+
     @Test
     public void checkLatitude() {
         Zone z = new Zone();
@@ -52,7 +54,6 @@ public class UnitTest {
         f.addZone(z);
         Zone test = f.getAllZones().get(0);
         assertEquals(test, z);
-
-
     }
+
 }

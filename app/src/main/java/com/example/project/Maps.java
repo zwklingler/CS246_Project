@@ -135,12 +135,12 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             z.setLongitude(lon);
             z.setName(name);
             z.setRadius(radius);
-            z.createGeofence(this);
+            //TODO create fences object and perform necessary functions
 
-            ChangeRinger cr = new ChangeRinger(this);
 
+            //ChangeRinger cr = new ChangeRinger(this);
             //changeRinger() sets it to 0 and revertRinger() reverts it to its volume before changeRinger() was called
-            cr.changeRinger();
+            //cr.changeRinger();
             //cr.revertRinger();
         }
     }

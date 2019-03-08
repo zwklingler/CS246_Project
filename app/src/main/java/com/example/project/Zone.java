@@ -10,16 +10,22 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.lang.Object;
 
 public class Zone extends AppCompatActivity {
+    @SerializedName("latitude")
     private double latitude;
+
+    @SerializedName("longitude")
     private double longitude;
+
+    @SerializedName("radius")
     private int radius;
+
+    @SerializedName("name")
     private String name;
-    private Geofence geofence;
-    private GeofencingClient geofencingClient;
 
     public double getLatitude() {
         return latitude;
@@ -37,19 +43,6 @@ public class Zone extends AppCompatActivity {
         return name;
     }
 
-    public void createGeofence(Context context) {
-       Geofence geofence = new Geofence.Builder().setRequestId(name) // Geofence ID
-               .setCircularRegion( latitude, longitude, radius) // defining fence region
-               // Transition types that it should look for
-               .setTransitionTypes( Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT )
-               .build();
-       this.geofence = geofence;
-
-       //This should probably go in the fences class
-       GeofencingClient geofencingClient = new GeofencingClient(context);
-    }
-
-
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
@@ -66,7 +59,4 @@ public class Zone extends AppCompatActivity {
         this.name = name;
     }
 
-    public Geofence getGeofence() {
-        return geofence;
-    }
 }

@@ -46,6 +46,7 @@ public class ChangeRinger extends IntentService {
         //am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 
         //Set Ringer Volume to 0 (works as expected)
+        Log.i("Altering Volume: ","Muting Volume");
         am.adjustStreamVolume(STREAM_RING, AudioManager.ADJUST_MUTE, 0);
 
         //Log.d("Ringer Test: ", String.valueOf(am.getRingerMode()));
@@ -58,6 +59,7 @@ public class ChangeRinger extends IntentService {
         //am.setRingerMode(2);
 
         //Unmute Ringer
+        Log.i("Altering Volume: ","Reverting Volume");
         am.adjustStreamVolume(STREAM_RING, AudioManager.ADJUST_UNMUTE, 0);
 
     }

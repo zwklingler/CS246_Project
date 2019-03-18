@@ -2,6 +2,7 @@ package com.example.project;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
@@ -119,8 +121,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         }
         else {
             radius = Integer.parseInt(sRadius);
-            if (radius < 100) {
-                Toast.makeText(this, "Radius must be at least 100",
+            if (radius < 100 || radius > 10000) {
+                Toast.makeText(this, "Radius must be between 100 and 10000",
                         Toast.LENGTH_LONG).show();
                 canSend = false;
             }
@@ -138,10 +140,32 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             //TODO create fences object and perform necessary functions
 
 
+            SharedPrefs sp = new SharedPrefs(this);
+            Fences f = new Fences(this);
+            f.addZone(z);
+
+            Log.i("Maps", "Made it passed f.addZone(z)");
+
+            //TODO FIX this STUPID LINE OF CODE THAT BREAKS EVERYTHING
+            sp.save(f);
+
+            String s = sp.getPref();
+            Toast.makeText(this, s,
+                    Toast.LENGTH_LONG).show();
+
             //ChangeRinger cr = new ChangeRinger(this);
             //changeRinger() sets it to 0 and revertRinger() reverts it to its volume before changeRinger() was called
             //cr.changeRinger();
             //cr.revertRinger();
+
+
+/*
+            Log.i("Intent Debug: ","Starting Main Activity");
+            //Create Intent
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("isSaved", true);
+            startActivity(intent);
+            */
         }
     }
 }

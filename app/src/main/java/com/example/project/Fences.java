@@ -28,7 +28,13 @@ public class Fences {
     @SerializedName("allZones")
     private List<Zone> allZones;
 
+    private Context context;
     private List<Geofence> allFences;
+
+    Fences(Context context) {
+        allZones = new ArrayList<>();
+        this.context = context;
+    }
 
     Fences() {
         allZones = new ArrayList<>();
@@ -36,50 +42,35 @@ public class Fences {
 
     public void deleteZone(String id) {
         //Search through allZones and remove zone with ID
-        //TODO delete zone with id name from saved preferences
+        Log.d("Deleting Zone: ",id);
+        Zone zone = null;
+        for (Zone z : allZones) {
+            if (z.getName() == id) {
+                zone = z;
+            }
+        }
+        if (zone != null) {
+            allZones.remove(zone);
+        }
+        //TODO delete zone with id name from active geofences
+
     }
 
-    public void addZone(Zone zone, Context context) {
-        //Load saved zones
-        load(context);
+    public void addZone(Zone zone) {
+        Log.d("Adding Zone: ",zone.getName());
         //Add zone to allZones
         allZones.add(zone);
-        //Save allZones with the new zone added
-        save(context);
     }
 
     public List<Zone> getAllZones() {
         return allZones;
     }
 
-    public void save(Context context) {
-        //TODO actually save allZones into shared preferences
-        //Save allZones using GSON to a file
-        final String s = "Some GSON Stuff";
-        SharedPreferences pref = context.getSharedPreferences("MyPref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-
-        editor.putString("GSON", s);
-        editor.apply();
-
-    }
-
-    public void load(Context context) {
-        //TODO actually load allZones into shared preferences
-        //Load allZones using GSON from a file
-        SharedPreferences pref = context.getSharedPreferences("MyPref", MODE_PRIVATE);
-        String s = pref.getString("GSON", null);         // getting String
-
-
-    }
-
-    public void addGeofences(Context context) {
-        //Loads all of the Zone variables
-        load(context);
-
+    public void addGeofences() {
+        Log.d("Geofencing: ","Creating Geofences from Zones");
         //Create a geofence for each zone
         for (Zone zone : allZones) {
-            //TODO check if geofence is already implace, and if so don't add it to the list
+            //TODO check if geofence is already in place, and if so don't add it to the list
             allFences.add(createGeofence(zone.getLatitude(), zone.getLongitude(), zone.getRadius(), zone.getName()));
         }
 
@@ -109,6 +100,7 @@ public class Fences {
             @Override
             public void onSuccess(Void aVoid) {
                 //Geofences Added
+                Log.i("Geofences", "Correctly Added Geofence");
 
             }
         }).addOnFailureListener(new OnFailureListener(){
@@ -119,10 +111,9 @@ public class Fences {
                 Log.e("Geofences", errorMessage);
             }
         });
-
-
     }
 
+    //This is called in addGeofences()
     public Geofence createGeofence(double latitude, double longitude, int radius, String name) {
         Geofence geofence = new Geofence.Builder().setRequestId(name) // Geofence ID
                 .setCircularRegion( latitude, longitude, radius) // defining fence region
@@ -132,5 +123,8 @@ public class Fences {
         return geofence;
     }
 
+    public void setContext(Context context) {
+        this.context = context;
+    }
 }
 

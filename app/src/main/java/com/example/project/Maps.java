@@ -1,20 +1,26 @@
 package com.example.project;
 
 import android.Manifest;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,7 +29,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static android.media.AudioManager.STREAM_RING;
 
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
@@ -34,6 +47,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -79,16 +93,24 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         });
 
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        final boolean gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-           if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                lat = 42;
-                lon = -112;
-            }
-            else {
-                lat = (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)).getLatitude();
-                lon = (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)).getLongitude();
-            }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("Maps", "No permissions");
+            return;
+        }
+
+        //This gets the current Location and if it's null for some reason it sets Lat and Lon to default values
+        LocationManager locationManager = (LocationManager)this.getSystemService(this.LOCATION_SERVICE);
+        Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (lastLocation == null) {
+            Log.e("Maps", "Not Available");
+            lat = 37;
+            lon = -120;
+        }
+        else {
+            lat = lastLocation.getLatitude();
+            lon = lastLocation.getLongitude();
+        }
+
 
         final LatLng location = new LatLng(lat, lon);
         MarkerOptions options = new MarkerOptions()
@@ -96,7 +118,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 .draggable(true)
                 .title("Location");
         mMap.addMarker(options);
-        float zoom = 14;
+        float zoom = 18;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom));
     }
 
@@ -147,25 +169,19 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             Log.i("Maps", "Made it passed f.addZone(z)");
 
             //TODO FIX this STUPID LINE OF CODE THAT BREAKS EVERYTHING
-            sp.save(f);
+            /*sp.save(f);
 
             String s = sp.getPref();
             Toast.makeText(this, s,
                     Toast.LENGTH_LONG).show();
+            */
 
-            //ChangeRinger cr = new ChangeRinger(this);
-            //changeRinger() sets it to 0 and revertRinger() reverts it to its volume before changeRinger() was called
-            //cr.changeRinger();
-            //cr.revertRinger();
-
-
-/*
             Log.i("Intent Debug: ","Starting Main Activity");
             //Create Intent
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("isSaved", true);
             startActivity(intent);
-            */
         }
     }
+
 }

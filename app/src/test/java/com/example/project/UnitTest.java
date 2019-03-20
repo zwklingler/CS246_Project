@@ -42,18 +42,4 @@ public class UnitTest {
         z.setRadius(1002);
         assertEquals(1002, z.getRadius());
     }
-
-    @Test
-    public void addZone() {
-        Zone z = new Zone();
-        z.setRadius(500);
-        z.setName("Work");
-        z.setLongitude(123.4);
-        z.setLatitude(53.65322);
-        Fences f = new Fences();
-        f.addZone(z);
-        Zone test = f.getAllZones().get(0);
-        assertEquals(test, z);
-    }
-
 }

@@ -38,12 +38,19 @@ import java.util.List;
 
 import static android.media.AudioManager.STREAM_RING;
 
+/**
+ * Generates a google map and input for creating geofences.
+ */
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private double lat;
     private double lon;
 
+    /**
+     * Creates map fragment when activity is started
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +72,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
+    /**
+     * Creates google map and places marker at current location.
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -72,10 +84,19 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         //Update when user drags marker
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
 
+            /**
+             * Performed at the start of dragging marker
+             * @param marker
+             */
             @Override
             public void onMarkerDragStart(Marker marker) {
+                //Nothing
             }
 
+            /**
+             * Moves marker after it has been dragged
+             * @param marker
+             */
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 Log.d("Location: ", "latitude : " + marker.getPosition().latitude);
@@ -87,12 +108,17 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             }
 
+            /**
+             * Performed while dragging marker
+             * @param marker
+             */
             @Override
             public void onMarkerDrag(Marker marker) {
             }
 
         });
 
+        //Check if location is allowed, which it should
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.e("Maps", "No permissions");
             return;
@@ -122,6 +148,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom));
     }
 
+    /**
+     * Validates input, saves geofence, and starts intent to Main Activity.
+     * @param view
+     */
     public void send(View view) {
         EditText eRadius = findViewById(R.id.editText2);
         EditText eName = findViewById(R.id.editText3);
@@ -165,6 +195,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             SharedPrefs sp = new SharedPrefs(this);
             Fences f = new Fences(this);
             f.addZone(z);
+
+            //Creates geofences from zones
+            f.addGeofences();
 
             Log.i("Maps", "Made it passed f.addZone(z)");
 

@@ -23,6 +23,9 @@ import com.google.gson.annotations.SerializedName;
 
 import static android.content.Context.MODE_PRIVATE;
 
+/**
+ * Creates geofences from a List of Zones.
+ */
 public class Fences {
 
     @SerializedName("allZones")
@@ -31,15 +34,28 @@ public class Fences {
     private Context context;
     private List<Geofence> allFences;
 
+    /**
+     * Initializes All Zones and saves the context.
+     * @param context
+     */
     Fences(Context context) {
         allZones = new ArrayList<>();
+        allFences = new ArrayList<>();
         this.context = context;
     }
 
+    /**
+     * Initializes All Zones.
+     */
     Fences() {
         allZones = new ArrayList<>();
+        allFences = new ArrayList<>();
     }
 
+    /**
+     * Deletes a zone from geofences, and from shared preferences.
+     * @param id
+     */
     public void deleteZone(String id) {
         //Search through allZones and remove zone with ID
         Log.d("Deleting Zone: ",id);
@@ -56,16 +72,25 @@ public class Fences {
 
     }
 
+    /**
+     * Adds a zone to All Zones.
+     * @param zone
+     */
     public void addZone(Zone zone) {
         Log.d("Adding Zone: ",zone.getName());
         //Add zone to allZones
         allZones.add(zone);
     }
 
+
     public List<Zone> getAllZones() {
         return allZones;
     }
 
+    /**
+     * Creates geofence objects from each Zone in All Zones, and store them in All Fences. All Fences gets added to the geofence builder.
+     * Intent is created for entrance and exit in geofence.
+     */
     public void addGeofences() {
         Log.d("Geofencing: ","Creating Geofences from Zones");
         //Create a geofence for each zone
@@ -87,39 +112,56 @@ public class Fences {
         GeofencingClient geofencingClient = new GeofencingClient(context);
         //Checks if there is there is a permission for ACCESS_FINE_LOCATION
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling permissions
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            //They should have permissions, but if for some reason they don't, an error will be logged
+            Log.e("Fences: ", "Location Permission Not Granted");
             return;
         }
+        Log.i("Fences: ", "Going to try adding Intent for Change Ringer");
+
         geofencingClient.addGeofences(builder.build(), geofencePendingIntent).addOnSuccessListener(new OnSuccessListener<Void>() {
+            /**
+             * Logs correctly added geofences
+             * @param aVoid
+             */
             @Override
             public void onSuccess(Void aVoid) {
                 //Geofences Added
-                Log.i("Geofences", "Correctly Added Geofence");
+                Log.i("Geofences", "Correctly Added Geofences");
 
             }
         }).addOnFailureListener(new OnFailureListener(){
+            /**
+             * Logs error on failure to add geofences.
+             * @param e
+             */
             @Override
             public void onFailure(@NonNull Exception e) {
                 //Failed to add Geofences
                 String errorMessage = "Failed to Add Geofences";
                 Log.e("Geofences", errorMessage);
+                Log.e("Geofenes", e.getMessage());
             }
         });
     }
 
     //This is called in addGeofences()
+
+    /**
+     * Creates a geofence object that would sent an intent on entrance and exit.
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @param name
+     * @return
+     */
     public Geofence createGeofence(double latitude, double longitude, int radius, String name) {
         Geofence geofence = new Geofence.Builder().setRequestId(name) // Geofence ID
                 .setCircularRegion( latitude, longitude, radius) // defining fence region
                 // Transition types that it should look for
                 .setTransitionTypes( Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT )
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .build();
+        Log.i("Fences: ", "Adding geofence named " + name);
         return geofence;
     }
 

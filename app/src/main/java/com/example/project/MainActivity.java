@@ -16,12 +16,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Checks permissions and has intents for changing the Activity.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private final static int REQUEST_CODE_ASK_PERMISSIONS = 1;
     private static final String[] REQUIRED_SDK_PERMISSIONS = new String[] {
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE };
 
+    /**
+     * Runs functions for checking permissions
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,15 +36,12 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            boolean isSaved = extras.getBoolean("isSaved");
-            if (isSaved == true) {
-                Toast.makeText(this, "Your quiet zone has been saved",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
     }
 
+    /**
+     * Creates intent for Maps Activity
+     * @param view
+     */
     public void openMaps(View view) {
         Log.i("Intent Debug: ","Starting Maps Activity");
         //Create Intent
@@ -72,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks whether permissions were granted, and if not exit the app.
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
                                            @NonNull int[] grantResults) {

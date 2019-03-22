@@ -70,6 +70,7 @@ public class ChangeRinger extends IntentService {
         //Passes the context to initialize the Audio Manager Item
         createAM(this);
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
+        Log.i("ChangeRinger: ", "Made it to On Handle Intent");
         if (geofencingEvent.hasError()) {
             String errorMessage = "There was an error with the geofences";
             Log.e("Geofence", errorMessage);

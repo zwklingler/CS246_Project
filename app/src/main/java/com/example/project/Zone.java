@@ -14,6 +14,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.lang.Object;
 
+/**
+ * Stores the data necessary for creating a geofence. It contains
+ * GSON, so that it can be easily serialized and deserialized.
+ */
 public class Zone extends AppCompatActivity {
     @SerializedName("latitude")
     private double latitude;

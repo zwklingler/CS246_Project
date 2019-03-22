@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.support.annotation.NonNull;
@@ -14,6 +16,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -26,6 +31,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -44,6 +51,7 @@ import static android.media.AudioManager.STREAM_RING;
 public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private Circle circle;
     private double lat;
     private double lon;
 
@@ -60,6 +68,50 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //Checks for when radius input is changed
+        EditText radiusInput = (EditText) findViewById(R.id.editText2);
+        radiusInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                EditText radiusInput = (EditText) findViewById(R.id.editText2);
+                String radiusString = radiusInput.getText().toString();
+                //TODO Fix from crashing when edit text is set back to 0
+                if (mMap != null && (TextUtils.isEmpty(radiusString) != true)) {
+                    int rad = Integer.parseInt(radiusString);
+
+                    if (rad >= 100 && rad <= 10000) {
+                        int color = 0x95e9cc;
+                        if (circle == null) {
+                            CircleOptions circleOptions = new CircleOptions();
+                            LatLng latLng = new LatLng(lat, lon);
+                            circleOptions.center(latLng);
+                            circleOptions.radius(rad);
+
+                            //Current Color is Cyan
+                            circleOptions.fillColor(color);
+                            circle = mMap.addCircle(circleOptions);
+                        }
+                        else {
+                            LatLng latLng = new LatLng(lat, lon);
+                            circle.setCenter(latLng);
+                            circle.setRadius(rad);
+                            circle.setFillColor(color);
+                        }
+                    }
+                }
+            }
+        });
     }
 
 
@@ -126,6 +178,38 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         //This gets the current Location and if it's null for some reason it sets Lat and Lon to default values
         LocationManager locationManager = (LocationManager)this.getSystemService(this.LOCATION_SERVICE);
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                //Callback for when location is updated
+                Log.i("Maps: ", "Location Listener Callback was Called");
+                Log.i("Maps: ", "Latitude: " + location.getLatitude() + "   Longitude: " + location.getLongitude());
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                //Callback when the status is updated
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                //Callback when Provider Permission is Enabled
+                Log.i("Maps: ", "Provider is Enabled: " + provider);
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                //Callback when Provider Permission is Disabled
+                Log.i("Maps: ", "Provider is Disabled: " + provider);
+
+
+            }
+
+        };
+        long minTime = 5 * 1000; // Minimum time interval for update in seconds, i.e. 5 seconds.
+        long minDistance = 10; // Minimum distance change for update in meters, i.e. 10 meters.
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, locationListener);
         Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (lastLocation == null) {
             Log.e("Maps", "Not Available");
@@ -163,57 +247,45 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
         if (name.isEmpty() || name.length() == 0 || name.equals("") || name == null) {
             Toast.makeText(this, "Enter a name",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_SHORT).show();
             canSend = false;
         }
         else if (sRadius.isEmpty() || sRadius.length() == 0 || sRadius.equals("") || sRadius == null) {
             Toast.makeText(this, "Enter a radius",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_SHORT).show();
             canSend = false;
         }
         else {
             radius = Integer.parseInt(sRadius);
             if (radius < 100 || radius > 10000) {
                 Toast.makeText(this, "Radius must be between 100 and 10000",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
                 canSend = false;
             }
         }
 
         if (canSend == true) {
-            //Toast.makeText(this, "Latitude: " + lat + "     Longitude: " + lon,
-              //      Toast.LENGTH_LONG).show();
+            Zone zone = new Zone();
+            zone.setLatitude(lat);
+            zone.setLongitude(lon);
+            zone.setName(name);
+            zone.setRadius(radius);
 
-            Zone z = new Zone();
-            z.setLatitude(lat);
-            z.setLongitude(lon);
-            z.setName(name);
-            z.setRadius(radius);
-            //TODO create fences object and perform necessary functions
+            FencesThread fencesThread = new FencesThread(this, this, zone);
+            Thread t = new Thread(fencesThread);
+            t.start();
 
-
-            SharedPrefs sp = new SharedPrefs(this);
-            Fences f = new Fences(this);
-            f.addZone(z);
-
-            //Creates geofences from zones
-            f.addGeofences();
-
-            Log.i("Maps", "Made it passed f.addZone(z)");
-
-            //TODO FIX this STUPID LINE OF CODE THAT BREAKS EVERYTHING
-            /*sp.save(f);
-
-            String s = sp.getPref();
-            Toast.makeText(this, s,
-                    Toast.LENGTH_LONG).show();
-            */
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             Log.i("Intent Debug: ","Starting Main Activity");
             //Create Intent
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("isSaved", true);
             startActivity(intent);
+
         }
     }
 

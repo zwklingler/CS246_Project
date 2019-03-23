@@ -32,7 +32,6 @@ public class FencesThread implements Runnable {
                     Toast.LENGTH_LONG).show();
             */
 
-        //TODO create fences object and perform necessary functions
         SharedPrefs sp = new SharedPrefs(context);
         Fences f = new Fences(context);
         f.addZone(zone);

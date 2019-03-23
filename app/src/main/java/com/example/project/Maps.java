@@ -84,32 +84,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             @Override
             public void afterTextChanged(Editable s) {
-                EditText radiusInput = (EditText) findViewById(R.id.editText2);
-                String radiusString = radiusInput.getText().toString();
-                //TODO Fix from crashing when edit text is set back to 0
-                if (mMap != null && (TextUtils.isEmpty(radiusString) != true)) {
-                    int rad = Integer.parseInt(radiusString);
-
-                    if (rad >= 100 && rad <= 10000) {
-                        int color = 0x95e9cc;
-                        if (circle == null) {
-                            CircleOptions circleOptions = new CircleOptions();
-                            LatLng latLng = new LatLng(lat, lon);
-                            circleOptions.center(latLng);
-                            circleOptions.radius(rad);
-
-                            //Current Color is Cyan
-                            circleOptions.fillColor(color);
-                            circle = mMap.addCircle(circleOptions);
-                        }
-                        else {
-                            LatLng latLng = new LatLng(lat, lon);
-                            circle.setCenter(latLng);
-                            circle.setRadius(rad);
-                            circle.setFillColor(color);
-                        }
-                    }
-                }
+                updateCircle();
             }
         });
     }
@@ -157,6 +132,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
                 marker.setSnippet(String.valueOf(marker.getPosition().latitude));
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                updateCircle();
 
             }
 
@@ -230,6 +206,34 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.addMarker(options);
         float zoom = 18;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom));
+    }
+
+    public void updateCircle() {
+        EditText radiusInput = (EditText) findViewById(R.id.editText2);
+        String radiusString = radiusInput.getText().toString();
+        if (mMap != null && (TextUtils.isEmpty(radiusString) != true)) {
+            int rad = Integer.parseInt(radiusString);
+
+            if (rad >= 100 && rad <= 10000) {
+                //Current Color is Transparent
+                int color = 0x95e9cc;
+                if (circle == null) {
+                    CircleOptions circleOptions = new CircleOptions();
+                    LatLng latLng = new LatLng(lat, lon);
+                    circleOptions.center(latLng);
+                    circleOptions.radius(rad);
+
+                    circleOptions.fillColor(color);
+                    circle = mMap.addCircle(circleOptions);
+                }
+                else {
+                    LatLng latLng = new LatLng(lat, lon);
+                    circle.setCenter(latLng);
+                    circle.setRadius(rad);
+                    circle.setFillColor(color);
+                }
+            }
+        }
     }
 
     /**

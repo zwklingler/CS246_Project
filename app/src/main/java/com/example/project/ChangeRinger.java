@@ -19,11 +19,9 @@ public class ChangeRinger extends IntentService {
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
      */
-    public ChangeRinger(String name) {
-        super(name);
+    public ChangeRinger() {
+        super("Change Ringer");
     }
 
     public void createAM(Context context) {
@@ -38,7 +36,6 @@ public class ChangeRinger extends IntentService {
             intent.putExtra("app_uid", context.getApplicationInfo().uid);
             context.startActivity(intent);
         }
-
     }
 
     public void changeRinger() {

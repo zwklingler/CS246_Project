@@ -42,6 +42,9 @@ public class FencesThread implements Runnable {
 
         Log.i("Maps", "Made it passed f.addZone(z)");
 
+        //This line is used to delete a geofence
+        f.deleteZone("asfddseafdsf");
+
 
 
         //Return

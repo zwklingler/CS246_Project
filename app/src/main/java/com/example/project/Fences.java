@@ -69,7 +69,34 @@ public class Fences {
             allZones.remove(zone);
         }
         //TODO delete zone with id name from active geofences
-
+        List<String> idList = new ArrayList<>();
+        idList.add(id);
+        GeofencingClient geofencingClient = new GeofencingClient(context);
+        //Checks if there is there is a permission for ACCESS_FINE_LOCATION
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //They should have permissions, but if for some reason they don't, an error will be logged
+            Log.e("Fences: ", "Location Permission Not Granted When Trying to Remove Geofence");
+            return;
+        }
+        Log.i("Fences: ", "Going to Try Removing Geofence with id: " + id);
+        geofencingClient.removeGeofences(idList)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i("Fences: ", "Geofence removed successfully");
+                // Geofences removed
+                // ...
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Fences: ", "Failed to Remove Geofences");
+                        Log.e("Fences: ", e.getMessage());
+                        // Failed to remove geofences
+                        // ...
+                    }
+                });
     }
 
     /**

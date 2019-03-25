@@ -22,63 +22,106 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
+/**
+ * Creates geofences from a List of Zones.
+ */
 public class Fences {
 
     @SerializedName("allZones")
     private List<Zone> allZones;
 
+    private Context context;
     private List<Geofence> allFences;
 
+    /**
+     * Initializes All Zones and saves the context.
+     * @param context
+     */
+    Fences(Context context) {
+        allZones = new ArrayList<>();
+        allFences = new ArrayList<>();
+        this.context = context;
+    }
+
+    /**
+     * Initializes All Zones.
+     */
     Fences() {
         allZones = new ArrayList<>();
+        allFences = new ArrayList<>();
     }
 
+    /**
+     * Deletes a zone from geofences, and from shared preferences.
+     * @param id
+     */
     public void deleteZone(String id) {
         //Search through allZones and remove zone with ID
-        //TODO delete zone with id name from saved preferences
+        Log.d("Deleting Zone: ",id);
+        Zone zone = null;
+        for (Zone z : allZones) {
+            if (z.getName() == id) {
+                zone = z;
+            }
+        }
+        if (zone != null) {
+            allZones.remove(zone);
+        }
+        //TODO delete zone with id name from active geofences
+        List<String> idList = new ArrayList<>();
+        idList.add(id);
+        GeofencingClient geofencingClient = new GeofencingClient(context);
+        //Checks if there is there is a permission for ACCESS_FINE_LOCATION
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //They should have permissions, but if for some reason they don't, an error will be logged
+            Log.e("Fences: ", "Location Permission Not Granted When Trying to Remove Geofence");
+            return;
+        }
+        Log.i("Fences: ", "Going to Try Removing Geofence with id: " + id);
+        geofencingClient.removeGeofences(idList)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i("Fences: ", "Geofence removed successfully");
+                // Geofences removed
+                // ...
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Fences: ", "Failed to Remove Geofences");
+                        Log.e("Fences: ", e.getMessage());
+                        // Failed to remove geofences
+                        // ...
+                    }
+                });
     }
 
-    public void addZone(Zone zone, Context context) {
-        //Load saved zones
-        load(context);
+    /**
+     * Adds a zone to All Zones.
+     * @param zone
+     */
+    public void addZone(Zone zone) {
+        Log.d("Adding Zone: ",zone.getName());
         //Add zone to allZones
         allZones.add(zone);
-        //Save allZones with the new zone added
-        save(context);
     }
+
 
     public List<Zone> getAllZones() {
         return allZones;
     }
 
-    public void save(Context context) {
-        //TODO actually save allZones into shared preferences
-        //Save allZones using GSON to a file
-        final String s = "Some GSON Stuff";
-        SharedPreferences pref = context.getSharedPreferences("MyPref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-
-        editor.putString("GSON", s);
-        editor.apply();
-
-    }
-
-    public void load(Context context) {
-        //TODO actually load allZones into shared preferences
-        //Load allZones using GSON from a file
-        SharedPreferences pref = context.getSharedPreferences("MyPref", MODE_PRIVATE);
-        String s = pref.getString("GSON", null);         // getting String
-
-
-    }
-
-    public void addGeofences(Context context) {
-        //Loads all of the Zone variables
-        load(context);
-
+    /**
+     * Creates geofence objects from each Zone in All Zones, and store them in All Fences. All Fences gets added to the geofence builder.
+     * Intent is created for entrance and exit in geofence.
+     */
+    public void addGeofences() {
+        Log.d("Geofencing: ","Creating Geofences from Zones");
         //Create a geofence for each zone
         for (Zone zone : allZones) {
-            //TODO check if geofence is already implace, and if so don't add it to the list
+            //TODO check if geofence is already in place, and if so don't add it to the list
             allFences.add(createGeofence(zone.getLatitude(), zone.getLongitude(), zone.getRadius(), zone.getName()));
         }
 
@@ -95,41 +138,61 @@ public class Fences {
         GeofencingClient geofencingClient = new GeofencingClient(context);
         //Checks if there is there is a permission for ACCESS_FINE_LOCATION
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling permissions
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            //They should have permissions, but if for some reason they don't, an error will be logged
+            Log.e("Fences: ", "Location Permission Not Granted");
             return;
         }
+        Log.i("Fences: ", "Going to try adding Intent for Change Ringer");
+
         geofencingClient.addGeofences(builder.build(), geofencePendingIntent).addOnSuccessListener(new OnSuccessListener<Void>() {
+            /**
+             * Logs correctly added geofences
+             * @param aVoid
+             */
             @Override
             public void onSuccess(Void aVoid) {
                 //Geofences Added
+                Log.i("Geofences", "Correctly Added Geofences");
 
             }
         }).addOnFailureListener(new OnFailureListener(){
+            /**
+             * Logs error on failure to add geofences.
+             * @param e
+             */
             @Override
             public void onFailure(@NonNull Exception e) {
                 //Failed to add Geofences
                 String errorMessage = "Failed to Add Geofences";
                 Log.e("Geofences", errorMessage);
+                Log.e("Geofenes", e.getMessage());
             }
         });
-
-
     }
 
+    //This is called in addGeofences()
+
+    /**
+     * Creates a geofence object that would sent an intent on entrance and exit.
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @param name
+     * @return
+     */
     public Geofence createGeofence(double latitude, double longitude, int radius, String name) {
         Geofence geofence = new Geofence.Builder().setRequestId(name) // Geofence ID
                 .setCircularRegion( latitude, longitude, radius) // defining fence region
                 // Transition types that it should look for
                 .setTransitionTypes( Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT )
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .build();
+        Log.i("Fences: ", "Adding geofence named " + name);
         return geofence;
     }
 
+    public void setContext(Context context) {
+        this.context = context;
+    }
 }
 

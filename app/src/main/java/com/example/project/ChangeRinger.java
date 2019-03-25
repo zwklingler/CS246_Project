@@ -19,11 +19,9 @@ public class ChangeRinger extends IntentService {
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
      */
-    public ChangeRinger(String name) {
-        super(name);
+    public ChangeRinger() {
+        super("Change Ringer");
     }
 
     public void createAM(Context context) {
@@ -38,7 +36,6 @@ public class ChangeRinger extends IntentService {
             intent.putExtra("app_uid", context.getApplicationInfo().uid);
             context.startActivity(intent);
         }
-
     }
 
     public void changeRinger() {
@@ -46,6 +43,7 @@ public class ChangeRinger extends IntentService {
         //am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 
         //Set Ringer Volume to 0 (works as expected)
+        Log.i("Altering Volume: ","Muting Volume");
         am.adjustStreamVolume(STREAM_RING, AudioManager.ADJUST_MUTE, 0);
 
         //Log.d("Ringer Test: ", String.valueOf(am.getRingerMode()));
@@ -58,6 +56,7 @@ public class ChangeRinger extends IntentService {
         //am.setRingerMode(2);
 
         //Unmute Ringer
+        Log.i("Altering Volume: ","Reverting Volume");
         am.adjustStreamVolume(STREAM_RING, AudioManager.ADJUST_UNMUTE, 0);
 
     }
@@ -68,6 +67,7 @@ public class ChangeRinger extends IntentService {
         //Passes the context to initialize the Audio Manager Item
         createAM(this);
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
+        Log.i("ChangeRinger: ", "Made it to On Handle Intent");
         if (geofencingEvent.hasError()) {
             String errorMessage = "There was an error with the geofences";
             Log.e("Geofence", errorMessage);

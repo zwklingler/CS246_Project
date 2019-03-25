@@ -21,4 +21,20 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(intent);
     }
+
+    public void openList(View view) {
+        Log.d("Intent Debug: ","Starting List Activity");
+        //Create Intent
+        Intent intent = new Intent(this, zoneLists.class);
+
+        startActivity(intent);
+    }
+
+    public void openSettings(View view) {
+        Log.d("Intent Debug: ","Starting Settings Activity");
+        //Create Intent
+        Intent intent = new Intent(this, zoneSettings.class);
+
+        startActivity(intent);
+    }
 }

@@ -118,6 +118,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onMarkerDragStart(Marker marker) {
                 //Nothing
+                circle.remove();
+                circle = null;
             }
 
             /**

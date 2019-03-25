@@ -91,7 +91,7 @@ public class Fences {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("Fences: ", "Failed to Remove Geofences");
+                        Log.e("Fences: ", "Failed to Remove Geofence");
                         Log.e("Fences: ", e.getMessage());
                         // Failed to remove geofences
                         // ...

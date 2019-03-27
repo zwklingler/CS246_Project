@@ -2,8 +2,11 @@ package com.example.project;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -29,7 +32,10 @@ public class SharedPrefs {
         //TODO actually save allZones into shared preferences
 
         Gson gson = new Gson();
-        final String s = gson.toJson(fences.getAllZones());
+
+        final String s = gson.toJson(fences);
+
+        Log.d("SharedPrefs: ", "GSON = " + s);
 
         //Save allZones using GSON to a file
         SharedPreferences pref = context.getSharedPreferences("Geofences", MODE_PRIVATE);

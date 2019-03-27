@@ -117,8 +117,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
              */
             @Override
             public void onMarkerDragStart(Marker marker) {
-                circle.remove();
-                circle = null;
+                if (circle != null) {
+                    circle.remove();
+                    circle = null;
+                }
+
             }
 
             /**
@@ -196,6 +199,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         else {
             lat = lastLocation.getLatitude();
             lon = lastLocation.getLongitude();
+            Log.i("Maps: ", "Latitude: " + lat + "   " + "Longitude" + lon);
         }
 
 
@@ -290,7 +294,6 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             //Create Intent
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-
         }
     }
 

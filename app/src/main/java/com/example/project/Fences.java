@@ -30,8 +30,8 @@ public class Fences {
     @SerializedName("allZones")
     private List<Zone> allZones;
 
-    private Context context;
-    private List<Geofence> allFences;
+    private transient Context context;
+    private transient List<Geofence> allFences;
 
     /**
      * Initializes All Zones and saves the context.
@@ -67,7 +67,7 @@ public class Fences {
         if (zone != null) {
             allZones.remove(zone);
         }
-        //TODO delete zone with id name from active geofences
+
         List<String> idList = new ArrayList<>();
         idList.add(id);
         GeofencingClient geofencingClient = new GeofencingClient(context);

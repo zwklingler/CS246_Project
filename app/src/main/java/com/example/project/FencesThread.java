@@ -23,22 +23,15 @@ public class FencesThread implements Runnable {
 
     @Override
     public void run() {
-        //Do the fences stuff
-        //TODO FIX this STUPID LINE OF CODE THAT BREAKS EVERYTHING
-        /*sp.save(f);
-
-          String s = sp.getPref();
-          Toast.makeText(this, s,
-                    Toast.LENGTH_LONG).show();
-            */
-
         SharedPrefs sp = new SharedPrefs(context);
-        Fences f = new Fences(context);
+
+        Fences f = sp.load();
+        if (f == null) {
+            f = new Fences();
+        }
         f.addZone(zone);
+        sp.save(f);
 
-
-        //Creates geofences from zones
-        f.addGeofences();
 
         Log.i("Maps", "Made it passed f.addZone(z)");
 

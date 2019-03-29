@@ -56,7 +56,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     private double lon;
 
     /**
-     * Creates map fragment when activity is started
+     * Creates map fragment when activity is started. Updates circle on the map after the
+     * Edit Text for radius is changed.
      * @param savedInstanceState
      */
     @Override
@@ -102,7 +103,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     /**
      * Creates google map and places marker at current location.
-     * @param googleMap
+     * @param googleMap Google Map to be displayed to the user.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -112,24 +113,23 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
 
             /**
-             * Performed at the start of dragging marker.
-             * @param marker
+             * Updates the circle when the marker starts to get dragged.
+             * @param marker Marker that is starting to get dragged.
              */
             @Override
             public void onMarkerDragStart(Marker marker) {
-                if (circle != null) {
-                    circle.remove();
-                    circle = null;
-                }
-
+                lat = marker.getPosition().latitude;
+                lon = marker.getPosition().longitude;
+                updateCircle();
             }
 
             /**
              * Moves marker after it has been dragged.
-             * @param marker
+             * @param marker Marker that has been dragged.
              */
             @Override
             public void onMarkerDragEnd(Marker marker) {
+                //Updates latitude and longitude after marker has been dropped
                 Log.d("Location: ", "latitude : " + marker.getPosition().latitude);
                 lat = marker.getPosition().latitude;
                 lon = marker.getPosition().longitude;
@@ -141,11 +141,14 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
 
             /**
-             * Performed while dragging marker.
-             * @param marker
+             * Moves the circle object while dragging the marker.
+             * @param marker Marker getting dragged.
              */
             @Override
             public void onMarkerDrag(Marker marker) {
+                lat = marker.getPosition().latitude;
+                lon = marker.getPosition().longitude;
+                updateCircle();
             }
 
         });
@@ -253,6 +256,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                     circle.setRadius(rad);
                     circle.setFillColor(color);
                 }
+            }
+            else if (circle != null){
+                circle.remove();
+                circle = null;
             }
         }
     }

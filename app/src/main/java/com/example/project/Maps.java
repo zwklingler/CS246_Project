@@ -112,7 +112,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
 
             /**
-             * Performed at the start of dragging marker
+             * Performed at the start of dragging marker.
              * @param marker
              */
             @Override
@@ -125,7 +125,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
 
             /**
-             * Moves marker after it has been dragged
+             * Moves marker after it has been dragged.
              * @param marker
              */
             @Override
@@ -141,7 +141,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
 
             /**
-             * Performed while dragging marker
+             * Performed while dragging marker.
              * @param marker
              */
             @Override
@@ -159,6 +159,11 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         //This gets the current Location and if it's null for some reason it sets Lat and Lon to default values
         LocationManager locationManager = (LocationManager)this.getSystemService(this.LOCATION_SERVICE);
         LocationListener locationListener = new LocationListener() {
+
+            /**
+             * Performed when the user's location changes.
+             * @param location The user's new location.
+             */
             @Override
             public void onLocationChanged(Location location) {
                 //Callback for when location is updated
@@ -171,6 +176,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 //Callback when the status is updated
             }
 
+            /**
+             * Logs the specified provider as enabled.
+             * @param provider The provider updating the user's location.
+             */
             @Override
             public void onProviderEnabled(String provider) {
                 //Callback when Provider Permission is Enabled
@@ -178,6 +187,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
             }
 
+            /**
+             * Logs the specified provider as disabled.
+             * @param provider The provider updating the user's location.
+             */
             @Override
             public void onProviderDisabled(String provider) {
                 //Callback when Provider Permission is Disabled
@@ -213,6 +226,9 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom));
     }
 
+    /**
+     * Updates the circle on google maps based on Lat and Lon variables.
+     */
     public void updateCircle() {
         EditText radiusInput = (EditText) findViewById(R.id.editText2);
         String radiusString = radiusInput.getText().toString();
@@ -243,17 +259,20 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
 
     /**
      * Validates input, saves geofence, and starts intent to Main Activity.
-     * @param view
+     * @param view View required for having an on click function for a button.
      */
     public void send(View view) {
+        //Gets radius and name
         EditText eRadius = findViewById(R.id.editText2);
         EditText eName = findViewById(R.id.editText3);
 
+        //Converts radius to int and name to string
         String name = eName.getText().toString().trim();
         String sRadius = eRadius.getText().toString().trim();
         boolean canSend = true;
         int radius = 0;
 
+        //Validates input
         if (name.isEmpty() || name.length() == 0 || name.equals("") || name == null) {
             Toast.makeText(this, "Enter a name",
                     Toast.LENGTH_SHORT).show();
@@ -273,6 +292,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
         }
 
+        //If there were not any errors
         if (canSend == true) {
             Zone zone = new Zone();
             zone.setLatitude(lat);
@@ -280,6 +300,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             zone.setName(name);
             zone.setRadius(radius);
 
+            //Create thread for performing fences functions
             FencesThread fencesThread = new FencesThread(this, this, zone);
             Thread t = new Thread(fencesThread);
             t.start();

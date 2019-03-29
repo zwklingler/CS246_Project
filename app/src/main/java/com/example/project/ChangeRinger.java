@@ -24,6 +24,10 @@ public class ChangeRinger extends IntentService {
         super("Change Ringer");
     }
 
+    /**
+     * Creates an Audio Manager object to alter the ringer.
+     * @param context Context needed for altering the volume.
+     */
     public void createAM(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager.isNotificationPolicyAccessGranted()) {
@@ -38,6 +42,9 @@ public class ChangeRinger extends IntentService {
         }
     }
 
+    /**
+     * Mutes volume or turns on Do Not Disturb.
+     */
     public void changeRinger() {
         //This should make the Ringer Silent, but for some reason it turns on Do Not Disturb (Doesn't work as expected)
         //am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
@@ -51,6 +58,9 @@ public class ChangeRinger extends IntentService {
 
     }
 
+    /**
+     * Changes ringer back to volume before it was muted.
+     */
     public void revertRinger() {
         //This turns off Do Not Disturb
         //am.setRingerMode(2);
@@ -62,6 +72,12 @@ public class ChangeRinger extends IntentService {
     }
 
     //Called when a geofence is triggered
+
+    /**
+     * Determines whether someone entered or exited the geofence, and mutes/unmutes the volume
+     * accordingly.
+     * @param intent Intent is passed when geofence detects an entrance or exit.
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
         //Passes the context to initialize the Audio Manager Item

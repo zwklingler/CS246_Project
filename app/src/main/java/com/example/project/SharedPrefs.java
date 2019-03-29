@@ -18,7 +18,6 @@ public class SharedPrefs {
     }
 
     public Fences load() {
-        //TODO actually load allZones into shared preferences
         //Load allZones using GSON from a file
         SharedPreferences pref = context.getSharedPreferences("Geofences", MODE_PRIVATE);
         String s = pref.getString("Fences", null);         // getting String
@@ -29,8 +28,6 @@ public class SharedPrefs {
     }
 
     public void save(Fences fences) {
-        //TODO actually save allZones into shared preferences
-
         Gson gson = new Gson();
 
         final String s = gson.toJson(fences);

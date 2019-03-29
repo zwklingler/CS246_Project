@@ -34,7 +34,7 @@ public class Fences {
     private transient List<Geofence> allFences;
 
     /**
-     * Initializes All Zones and saves the context.
+     * Initializes All Zones and All Fences and saves the context.
      * @param context
      */
     Fences(Context context) {
@@ -44,7 +44,7 @@ public class Fences {
     }
 
     /**
-     * Initializes All Zones.
+     * Initializes All Zones and All Fences.
      */
     Fences() {
         allZones = new ArrayList<>();
@@ -53,7 +53,7 @@ public class Fences {
 
     /**
      * Deletes a zone from geofences, and from shared preferences.
-     * @param id
+     * @param id Name of the geofence to be deleted.
      */
     public void deleteZone(String id) {
         //Search through allZones and remove zone with ID
@@ -100,7 +100,7 @@ public class Fences {
 
     /**
      * Adds a zone to All Zones.
-     * @param zone
+     * @param zone Will be added to all zones.
      */
     public void addZone(Zone zone) {
         Log.d("Adding Zone: ",zone.getName());
@@ -174,11 +174,11 @@ public class Fences {
 
     /**
      * Creates a geofence object that would sent an intent on entrance and exit.
-     * @param latitude
-     * @param longitude
-     * @param radius
-     * @param name
-     * @return
+     * @param latitude Latitude of the geofence center.
+     * @param longitude Longitude of the geofence center.
+     * @param radius Radius of the geofence.
+     * @param name Name of the geofence.
+     * @return Returns the created geofence.
      */
     public Geofence createGeofence(double latitude, double longitude, int radius, String name) {
         Geofence geofence = new Geofence.Builder().setRequestId(name) // Geofence ID

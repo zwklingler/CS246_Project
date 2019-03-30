@@ -35,7 +35,7 @@ public class Fences {
 
     /**
      * Initializes All Zones and All Fences and saves the context.
-     * @param context
+     * @param context Context to be saved and used for creating Geofences.
      */
     Fences(Context context) {
         allZones = new ArrayList<>();
@@ -119,12 +119,15 @@ public class Fences {
      */
     public void addGeofences() {
         Log.d("Geofencing: ","Creating Geofences from Zones");
-        //Create a geofence for each zone
+        //Add only the newest zone because the rest are already in place
+        Zone zone  = allZones.get(allZones.size() - 1);
+        allFences.add(createGeofence(zone.getLatitude(), zone.getLongitude(), zone.getRadius(), zone.getName()));
+        /*
         for (Zone zone : allZones) {
-            //TODO check if geofence is already in place, and if so don't add it to the list
             allFences.add(createGeofence(zone.getLatitude(), zone.getLongitude(), zone.getRadius(), zone.getName()));
+            Log.i("Fences: ", zone.getName());
         }
-
+        */
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         //Check for exit and enter
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER | GeofencingRequest.INITIAL_TRIGGER_EXIT);

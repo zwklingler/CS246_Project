@@ -11,7 +11,7 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 
 /**
- * Runs a thread to perform fences functions to create geofences
+ * A thread to perform fences functions to create geofences.
  */
 public class FencesThread implements Runnable {
     private WeakReference<Activity> activity;
@@ -41,7 +41,9 @@ public class FencesThread implements Runnable {
         if (f == null) {
             f = new Fences();
         }
+        f.setContext(context);
         f.addZone(zone);
+        f.addGeofences();
         sp.save(f);
 
 

@@ -2,6 +2,7 @@ package com.example.project;
 
 import android.Manifest;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -58,7 +60,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
     /**
      * Creates map fragment when activity is started. Updates circle on the map after the
      * Edit Text for radius is changed.
-     * @param savedInstanceState
+     * @param savedInstanceState Reference to a bundle object.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,54 +161,16 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             return;
         }
 
+        //Service provides location updates now
+        Intent intent = new Intent(this, LocationMonitorService.class);
+        startService(intent);
+
         //This gets the current Location and if it's null for some reason it sets Lat and Lon to default values
         LocationManager locationManager = (LocationManager)this.getSystemService(this.LOCATION_SERVICE);
-        LocationListener locationListener = new LocationListener() {
-
-            /**
-             * Performed when the user's location changes.
-             * @param location The user's new location.
-             */
-            @Override
-            public void onLocationChanged(Location location) {
-                //Callback for when location is updated
-                Log.i("Maps: ", "Location Listener Callback was Called");
-                Log.i("Maps: ", "Latitude: " + location.getLatitude() + "   Longitude: " + location.getLongitude());
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                //Callback when the status is updated
-            }
-
-            /**
-             * Logs the specified provider as enabled.
-             * @param provider The provider updating the user's location.
-             */
-            @Override
-            public void onProviderEnabled(String provider) {
-                //Callback when Provider Permission is Enabled
-                Log.i("Maps: ", "Provider is Enabled: " + provider);
-
-            }
-
-            /**
-             * Logs the specified provider as disabled.
-             * @param provider The provider updating the user's location.
-             */
-            @Override
-            public void onProviderDisabled(String provider) {
-                //Callback when Provider Permission is Disabled
-                Log.i("Maps: ", "Provider is Disabled: " + provider);
-
-
-            }
-
-        };
-        long minTime = 5 * 1000; // Minimum time interval for update in seconds, i.e. 5 seconds.
-        long minDistance = 10; // Minimum distance change for update in meters, i.e. 10 meters.
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, locationListener);
         Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+
+
         if (lastLocation == null) {
             Log.e("Maps", "Not Available");
             lat = 37;

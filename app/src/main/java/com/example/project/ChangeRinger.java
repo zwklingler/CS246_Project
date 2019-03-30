@@ -14,6 +14,9 @@ import com.google.android.gms.location.GeofencingEvent;
 
 import static android.media.AudioManager.STREAM_RING;
 
+/**
+ * Changes the ringer volume using an Audio Manager.
+ */
 public class ChangeRinger extends IntentService {
     private AudioManager am;
 

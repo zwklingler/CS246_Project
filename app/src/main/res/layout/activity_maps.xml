@@ -61,7 +61,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView2"
             tools:ignore="Autofill"
             android:textColor="@color/text"
-            android:background="@color/editTextBackground"/>
+            android:background="@drawable/input" />
 
         <TextView
             android:id="@+id/textView3"
@@ -89,7 +89,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView3"
             tools:ignore="Autofill"
             android:textColor="@color/text"
-            android:background="@color/editTextBackground"/>
+            android:background="@drawable/input" />
 
     </android.support.constraint.ConstraintLayout>
 

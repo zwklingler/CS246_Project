@@ -1,8 +1,10 @@
 package com.example.project;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -11,6 +13,7 @@ import android.os.IBinder;
 import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -23,10 +26,10 @@ public class LocationMonitorService extends Service {
 
     LocationManager mLocationManager = null;
 
-    private class LocationListener implements android.location.LocationListener {
+    private class LocationListen implements android.location.LocationListener {
         Location mLastLocation;
 
-        public LocationListener(String provider) {
+        public LocationListen(String provider) {
             Log.i("LocationMonitor: ", "LocationListener " + provider);
             mLastLocation = new Location(provider);
         }
@@ -52,7 +55,13 @@ public class LocationMonitorService extends Service {
             Log.i("LocationMonitor: ", "onStatusChanged: " + provider);
         }
     }
-    LocationListener mLocationListener = new LocationListener(LocationManager.GPS_PROVIDER);
+
+    LocationListen mLocationListen = new LocationListen(LocationManager.GPS_PROVIDER);
+    LocationListener[] mLocationListeners = new LocationListener[]{
+            new LocationListen(LocationManager.GPS_PROVIDER),
+            new LocationListen(LocationManager.NETWORK_PROVIDER)
+    };
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -70,15 +79,34 @@ public class LocationMonitorService extends Service {
     public void onCreate() {
         Log.i("LocationMonitor: ", "onCreate");
         initializeLocationManager();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("LocationMonitor: ", "Permission Denied");
+            return;
+        }
+
+        Log.i("LocationMonitor", "onCreate");
+        initializeLocationManager();
         try {
             mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, 1000, 5f,
-                    mLocationListener);
+                    LocationManager.GPS_PROVIDER, 10000, 5,
+                    mLocationListeners[0]);
         } catch (java.lang.SecurityException ex) {
-            Log.i("LocationMonitor: ", "fail to request location update, ignore", ex);
+            Log.d("LocationMonitor", "Failed to get location update", ex);
         } catch (IllegalArgumentException ex) {
-            Log.d("LocationMonitor: ", "gps provider does not exist " + ex.getMessage());
+            Log.d("LocationMonitor", "GPS Provider does not exist " + ex.getMessage());
         }
+
+        try {
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, 10000, 5,
+                    mLocationListeners[1]);
+        } catch (java.lang.SecurityException ex) {
+            Log.d("LocationMonitor", "Failed to get location update", ex);
+        } catch (IllegalArgumentException ex) {
+            Log.d("LocationMonitor", "Network Provider does not exist, " + ex.getMessage());
+        }
+
     }
 
     @Override
@@ -86,10 +114,12 @@ public class LocationMonitorService extends Service {
         Log.i("LocationMonitor: ", "onDestroy");
         super.onDestroy();
         if (mLocationManager != null) {
-            try {
-                mLocationManager.removeUpdates(mLocationListener);
-            } catch (Exception ex) {
-                Log.i("LocationMonitor: ", "fail to remove location listners, ignore", ex);
+            for (int i = 0; i < mLocationListeners.length; i++) {
+                try {
+                    mLocationManager.removeUpdates(mLocationListeners[i]);
+                } catch (Exception ex) {
+                    Log.i("LocationMonitor", "Failed to remove location listeners", ex);
+                }
             }
         }
     }

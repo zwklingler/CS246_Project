@@ -64,6 +64,10 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Service provides location updates now
+        Intent intent = new Intent(this, LocationMonitorService.class);
+        startService(intent);
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_maps);
@@ -161,14 +165,14 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             return;
         }
 
-        //Service provides location updates now
-        Intent intent = new Intent(this, LocationMonitorService.class);
-        startService(intent);
-
         //This gets the current Location and if it's null for some reason it sets Lat and Lon to default values
         LocationManager locationManager = (LocationManager)this.getSystemService(this.LOCATION_SERVICE);
         Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
+        Location lastLocationNet = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (lastLocation.getElapsedRealtimeNanos() < lastLocationNet.getElapsedRealtimeNanos())
+        {
+            lastLocation = lastLocationNet;
+        }
 
 
         if (lastLocation == null) {
@@ -189,7 +193,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
                 .draggable(true)
                 .title("Location");
         mMap.addMarker(options);
-        float zoom = 18;
+        float zoom = 17;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom));
     }
 

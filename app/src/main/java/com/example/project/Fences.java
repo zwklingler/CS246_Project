@@ -30,12 +30,12 @@ public class Fences {
     @SerializedName("allZones")
     private List<Zone> allZones;
 
-    private Context context;
-    private List<Geofence> allFences;
+    private transient Context context;
+    private transient List<Geofence> allFences;
 
     /**
-     * Initializes All Zones and saves the context.
-     * @param context
+     * Initializes All Zones and All Fences and saves the context.
+     * @param context Context to be saved and used for creating Geofences.
      */
     Fences(Context context) {
         allZones = new ArrayList<>();
@@ -44,7 +44,7 @@ public class Fences {
     }
 
     /**
-     * Initializes All Zones.
+     * Initializes All Zones and All Fences.
      */
     Fences() {
         allZones = new ArrayList<>();
@@ -53,7 +53,7 @@ public class Fences {
 
     /**
      * Deletes a zone from geofences, and from shared preferences.
-     * @param id
+     * @param id Name of the geofence to be deleted.
      */
     public void deleteZone(String id) {
         //Search through allZones and remove zone with ID
@@ -67,7 +67,7 @@ public class Fences {
         if (zone != null) {
             allZones.remove(zone);
         }
-        //TODO delete zone with id name from active geofences
+
         List<String> idList = new ArrayList<>();
         idList.add(id);
         GeofencingClient geofencingClient = new GeofencingClient(context);
@@ -90,7 +90,7 @@ public class Fences {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("Fences: ", "Failed to Remove Geofences");
+                        Log.e("Fences: ", "Failed to Remove Geofence");
                         Log.e("Fences: ", e.getMessage());
                         // Failed to remove geofences
                         // ...
@@ -100,7 +100,7 @@ public class Fences {
 
     /**
      * Adds a zone to All Zones.
-     * @param zone
+     * @param zone Will be added to all zones.
      */
     public void addZone(Zone zone) {
         Log.d("Adding Zone: ",zone.getName());
@@ -119,12 +119,15 @@ public class Fences {
      */
     public void addGeofences() {
         Log.d("Geofencing: ","Creating Geofences from Zones");
-        //Create a geofence for each zone
+        //Add only the newest zone because the rest are already in place
+        Zone zone  = allZones.get(allZones.size() - 1);
+        allFences.add(createGeofence(zone.getLatitude(), zone.getLongitude(), zone.getRadius(), zone.getName()));
+        /*
         for (Zone zone : allZones) {
-            //TODO check if geofence is already in place, and if so don't add it to the list
             allFences.add(createGeofence(zone.getLatitude(), zone.getLongitude(), zone.getRadius(), zone.getName()));
+            Log.i("Fences: ", zone.getName());
         }
-
+        */
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         //Check for exit and enter
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER | GeofencingRequest.INITIAL_TRIGGER_EXIT);
@@ -174,11 +177,11 @@ public class Fences {
 
     /**
      * Creates a geofence object that would sent an intent on entrance and exit.
-     * @param latitude
-     * @param longitude
-     * @param radius
-     * @param name
-     * @return
+     * @param latitude Latitude of the geofence center.
+     * @param longitude Longitude of the geofence center.
+     * @param radius Radius of the geofence.
+     * @param name Name of the geofence.
+     * @return Returns the created geofence.
      */
     public Geofence createGeofence(double latitude, double longitude, int radius, String name) {
         Geofence geofence = new Geofence.Builder().setRequestId(name) // Geofence ID

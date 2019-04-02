@@ -30,11 +30,17 @@ public class zoneLists extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ListView zoneList = findViewById(R.id.zoneListView);
-        List<String> testList = new ArrayList<String>();
-        testList.add("cool");
-        testList.add("neat");
-        testList.add("ok");
+        //List<Zone> testList = new ArrayList<>();
 
+        //SharedPrefs sp = new SharedPrefs(this);
+        //Fences f = new Fences(this);
+        //Fences fences = sp.load();
+        //List<Zone> testList = new ArrayList<Zone>(fences.getAllZones());
+
+        //Zone zone = new Zone();
+        //zone.setName("coolZone");
+        //testList.add(zone);
+/*
         zoneList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -44,11 +50,11 @@ public class zoneLists extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        */
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, testList
-        );
+        //ArrayAdapter<Zone> adapter = new ArrayAdapter<Zone>(this, android.R.layout.simple_list_item_1, testList);
 
-        zoneList.setAdapter(adapter);
+        //zoneList.setAdapter(adapter);
 
 
 

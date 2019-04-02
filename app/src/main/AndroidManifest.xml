@@ -52,6 +52,12 @@
         android:value="@integer/google_play_services_version" />
 
         <activity
+            android:name=".zoneSettings"
+            android:label="@string/title_activity_zone_settings"></activity>
+        <activity
+            android:name=".zoneLists"
+            android:label="@string/title_activity_zone_lists"></activity>
+        <activity
             android:name=".Maps"
             android:label="@string/title_activity_maps"></activity>
         <activity android:name=".MainActivity">

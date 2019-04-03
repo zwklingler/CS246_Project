@@ -92,6 +92,7 @@ public class ChangeRinger extends IntentService {
             Log.e("Geofence", errorMessage);
             return;
         }
+
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
         //If they entered the zone, silence the phone
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {

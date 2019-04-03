@@ -32,9 +32,10 @@ public class zoneLists extends AppCompatActivity {
         ListView zoneList = findViewById(R.id.zoneListView);
         //List<Zone> testList = new ArrayList<>();
 
-        //SharedPrefs sp = new SharedPrefs(this);
+        SharedPrefs sp = new SharedPrefs(this);
         //Fences f = new Fences(this);
-        //Fences fences = sp.load();
+        Fences fences = sp.load();
+        fences.setContext(this);
         //List<Zone> testList = new ArrayList<Zone>(fences.getAllZones());
 
         //Zone zone = new Zone();
@@ -55,8 +56,6 @@ public class zoneLists extends AppCompatActivity {
         //ArrayAdapter<Zone> adapter = new ArrayAdapter<Zone>(this, android.R.layout.simple_list_item_1, testList);
 
         //zoneList.setAdapter(adapter);
-
-
 
     }
 }

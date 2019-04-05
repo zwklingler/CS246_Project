@@ -51,6 +51,9 @@ public class ChangeRinger extends IntentService {
     public void changeRinger() {
         //This should make the Ringer Silent, but for some reason it turns on Do Not Disturb (Doesn't work as expected)
         //am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        //am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+
+
 
         //Set Ringer Volume to 0 (works as expected)
         Log.i("Altering Volume: ","Muting Volume");

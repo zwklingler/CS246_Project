@@ -287,9 +287,8 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback {
             }
 
             Log.i("Intent Debug: ","Starting Main Activity");
-            //Create Intent
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            //Finish
+            finish();
         }
     }
 

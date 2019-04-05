@@ -30,32 +30,37 @@ public class zoneLists extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ListView zoneList = findViewById(R.id.zoneListView);
-        //List<Zone> testList = new ArrayList<>();
 
-        SharedPrefs sp = new SharedPrefs(this);
+        final List<Zone> zones = new ArrayList<>();
+
+        //SharedPrefs sp = new SharedPrefs(this);
         //Fences f = new Fences(this);
-        Fences fences = sp.load();
-        fences.setContext(this);
+        //Fences fences = sp.load();
+        //fences.setContext(this);
         //List<Zone> testList = new ArrayList<Zone>(fences.getAllZones());
 
-        //Zone zone = new Zone();
-        //zone.setName("coolZone");
-        //testList.add(zone);
-/*
+        Zone zone = new Zone();
+        zone.setName("coolZone");
+        zones.add(zone);
+
+        Zone zone2 = new Zone();
+        zone2.setName("Lame Zone");
+        zones.add(zone2);
+
+        final ArrayAdapter<Zone> adapter = new ArrayAdapter<Zone>(this, android.R.layout.simple_list_item_1, zones);
+
+        zoneList.setAdapter(adapter);
+
         zoneList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("Intent Debug: ","Starting Settings Activity");
-                Intent intent = new Intent(getApplicationContext(), zoneSettings.class);
-                intent.putExtra("index", position);
-                startActivity(intent);
+                zones.remove(position);
+                adapter.notifyDataSetChanged();
             }
         });
-        */
+    }
 
-        //ArrayAdapter<Zone> adapter = new ArrayAdapter<Zone>(this, android.R.layout.simple_list_item_1, testList);
-
-        //zoneList.setAdapter(adapter);
-
+    public void saveList(View view) {
+        finish();
     }
 }

@@ -31,7 +31,7 @@ public class zoneSettings extends AppCompatActivity implements SeekBar.OnSeekBar
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        Toast.makeText(this, String.valueOf(progress), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, String.valueOf(progress), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -45,12 +45,9 @@ public class zoneSettings extends AppCompatActivity implements SeekBar.OnSeekBar
     }
 
     public void save(View view) {
-
+        finish();
     }
 
-    public void delete(View view) {
-
-    }
 }
 
 

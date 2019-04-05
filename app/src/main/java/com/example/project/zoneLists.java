@@ -22,6 +22,8 @@ import java.util.List;
 
 public class zoneLists extends AppCompatActivity {
 
+    private Fences fences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,14 +33,14 @@ public class zoneLists extends AppCompatActivity {
 
         ListView zoneList = findViewById(R.id.zoneListView);
 
-        final List<Zone> zones = new ArrayList<>();
+        //final List<Zone> zones = new ArrayList<>();
 
-        //SharedPrefs sp = new SharedPrefs(this);
-        //Fences f = new Fences(this);
-        //Fences fences = sp.load();
-        //fences.setContext(this);
-        //List<Zone> testList = new ArrayList<Zone>(fences.getAllZones());
+        SharedPrefs sp = new SharedPrefs(this);
+        fences = sp.load();
+        fences.setContext(this);
+        final List<Zone> zones = new ArrayList<Zone>(fences.getAllZones());
 
+        /*
         Zone zone = new Zone();
         zone.setName("coolZone");
         zones.add(zone);
@@ -46,6 +48,7 @@ public class zoneLists extends AppCompatActivity {
         Zone zone2 = new Zone();
         zone2.setName("Lame Zone");
         zones.add(zone2);
+*/
 
         final ArrayAdapter<Zone> adapter = new ArrayAdapter<Zone>(this, android.R.layout.simple_list_item_1, zones);
 
@@ -54,6 +57,7 @@ public class zoneLists extends AppCompatActivity {
         zoneList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                fences.deleteZone(zones.get(position).getName());
                 zones.remove(position);
                 adapter.notifyDataSetChanged();
             }
@@ -61,6 +65,8 @@ public class zoneLists extends AppCompatActivity {
     }
 
     public void saveList(View view) {
+        SharedPrefs sp = new SharedPrefs(this);
+        sp.save(fences);
         finish();
     }
 }

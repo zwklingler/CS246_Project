@@ -24,6 +24,9 @@ public class zoneLists extends AppCompatActivity {
 
     private Fences fences;
 
+    /**
+     * Creates a list of zones to be deleted, uses sharedPrefs to load the zones
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,24 +36,13 @@ public class zoneLists extends AppCompatActivity {
 
         ListView zoneList = findViewById(R.id.zoneListView);
 
-        //final List<Zone> zones = new ArrayList<>();
-
         SharedPrefs sp = new SharedPrefs(this);
         fences = sp.load();
         fences.setContext(this);
-        final List<Zone> zones = new ArrayList<Zone>(fences.getAllZones());
+        final List<Zone> zones = new ArrayList<>(fences.getAllZones());
 
-        /*
-        Zone zone = new Zone();
-        zone.setName("coolZone");
-        zones.add(zone);
 
-        Zone zone2 = new Zone();
-        zone2.setName("Lame Zone");
-        zones.add(zone2);
-*/
-
-        final ArrayAdapter<Zone> adapter = new ArrayAdapter<Zone>(this, android.R.layout.simple_list_item_1, zones);
+        final ArrayAdapter<Zone> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, zones);
 
         zoneList.setAdapter(adapter);
 
@@ -64,6 +56,9 @@ public class zoneLists extends AppCompatActivity {
         });
     }
 
+    /**
+     * Saves deletions and goes back to the main activity
+     */
     public void saveList(View view) {
         SharedPrefs sp = new SharedPrefs(this);
         sp.save(fences);

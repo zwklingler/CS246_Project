@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -56,8 +55,6 @@ public class SharedPrefs {
         SharedPreferences.Editor editor = pref.edit();
 
         editor.putString("Fences", s);
-
         editor.apply();
     }
-
 }

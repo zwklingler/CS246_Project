@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     public void openList(View view) {
         Log.d("Intent Debug: ","Starting List Activity");
         //Create Intent
-        Intent intent = new Intent(this, zoneLists.class);
+        Intent intent = new Intent(this, ZoneLists.class);
 
         startActivity(intent);
     }
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     public void openSettings(View view) {
         Log.d("Intent Debug: ","Starting Settings Activity");
         //Create Intent
-        Intent intent = new Intent(this, zoneSettings.class);
+        Intent intent = new Intent(this, ZoneSettings.class);
 
         startActivity(intent);
     }
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
      * Checks the dynamically-controlled permissions and requests missing permissions from end user.
      */
     protected void checkPermissions() {
-        final List<String> missingPermissions = new ArrayList<String>();
+        final List<String> missingPermissions = new ArrayList<>();
         // check all required dynamic permissions
         for (final String permission : REQUIRED_SDK_PERMISSIONS) {
             final int result = ContextCompat.checkSelfPermission(this, permission);

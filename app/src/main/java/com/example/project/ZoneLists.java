@@ -1,31 +1,28 @@
 package com.example.project;
 
-import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.autofill.AutofillValue;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class zoneLists extends AppCompatActivity {
+/**
+ * Activity for removing geofences from the loaded fences object,
+ * and then re-saving fences into shared preferences.
+ */
+public class ZoneLists extends AppCompatActivity {
 
     private Fences fences;
 
     /**
-     * Creates a list of zones to be deleted, uses sharedPrefs to load the zones
+     * Creates a list of zones to be deleted, uses sharedPrefs to load the zones.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +33,7 @@ public class zoneLists extends AppCompatActivity {
 
         ListView zoneList = findViewById(R.id.zoneListView);
 
+        //Load Fences from Shared Prefs
         SharedPrefs sp = new SharedPrefs(this);
         fences = sp.load();
         fences.setContext(this);
@@ -49,6 +47,7 @@ public class zoneLists extends AppCompatActivity {
         zoneList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Remove zone from fences and delete it on List
                 fences.deleteZone(zones.get(position).getName());
                 zones.remove(position);
                 adapter.notifyDataSetChanged();
@@ -57,11 +56,16 @@ public class zoneLists extends AppCompatActivity {
     }
 
     /**
-     * Saves deletions and goes back to the main activity
+     * Saves deletions and goes back to the main activity.
      */
     public void saveList(View view) {
+        //Save changes to Shared Prefs
         SharedPrefs sp = new SharedPrefs(this);
         sp.save(fences);
+
+        //Go back to Main Activity
         finish();
+        Toast.makeText(this, "The Selected Zones have been Removed", Toast.LENGTH_SHORT).show();
+
     }
 }

@@ -1,12 +1,11 @@
 package com.example.project;
 
-import android.app.Activity;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
@@ -46,34 +45,48 @@ public class ChangeRinger extends IntentService {
     }
 
     /**
-     * Mutes volume or turns on Do Not Disturb.
+     * Mutes volume, Turns on Vibrate, or Changes Volume to Specified Amount.
      */
     public void changeRinger() {
-        //This should make the Ringer Silent, but for some reason it turns on Do Not Disturb (Doesn't work as expected)
-        //am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-        //am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-
-
-
-        //Set Ringer Volume to 0 (works as expected)
-        Log.i("Altering Volume: ","Muting Volume");
-        am.adjustStreamVolume(STREAM_RING, AudioManager.ADJUST_MUTE, 0);
-
-        //Log.d("Ringer Test: ", String.valueOf(am.getRingerMode()));
-        //am.setRingerMode(2);
-
+        //Load vibrate and volume from shared prefs
+        SharedPreferences pref = this.getSharedPreferences("Geofences", MODE_PRIVATE);
+        double doubleVolume = pref.getInt("Volume", 0) * 0.01;
+        int volume = (int) (doubleVolume * am.getStreamMaxVolume(STREAM_RING));
+        boolean vibrate = pref.getBoolean("Vibrate", false);
+        //Do they want volume or vibrate instead of muting
+        if (vibrate) {
+            Log.i("Altering Volume: ","Setting to Vibrate");
+            am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+        }
+        else if (volume >= 1 && volume <= am.getStreamMaxVolume(STREAM_RING)) {
+            Log.i("Altering Volume: ","Setting Volume to " + volume);
+            am.setStreamVolume(STREAM_RING, volume, 0);
+        }
+        else {
+            //Set Ringer Volume to 0 (works as expected)
+            Log.i("Altering Volume: ","Muting Volume");
+            am.adjustStreamVolume(STREAM_RING, AudioManager.ADJUST_MUTE, 0);
+        }
     }
 
     /**
      * Changes ringer back to volume before it was muted.
      */
     public void revertRinger() {
-        //This turns off Do Not Disturb
-        //am.setRingerMode(2);
+        SharedPreferences pref = this.getSharedPreferences("Geofences", MODE_PRIVATE);
+        boolean vibrate = pref.getBoolean("Vibrate", false);
+        //If Vibrate is on revert back using this way
+        if (vibrate) {
+            //Go back from Vibrate
+            Log.i("Altering Volume: ","Reverting From Vibrate");
+            am.setRingerMode(2);
+        }
+        else {
+            //Unmute Ringer
+            Log.i("Altering Volume: ","Reverting Volume");
+            am.adjustStreamVolume(STREAM_RING, AudioManager.ADJUST_UNMUTE, 0);
+        }
 
-        //Unmute Ringer
-        Log.i("Altering Volume: ","Reverting Volume");
-        am.adjustStreamVolume(STREAM_RING, AudioManager.ADJUST_UNMUTE, 0);
 
     }
 
